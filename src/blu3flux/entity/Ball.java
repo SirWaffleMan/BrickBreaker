@@ -2,6 +2,7 @@ package blu3flux.entity;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import blu3flux.BrickBreaker;
 
@@ -11,6 +12,7 @@ public class Ball extends Entity{
 	double ySpeed = -3.0f;
 	
 	ArrayList<Brick> bricks;
+	ArrayList<Brick> collidingBricks;
 	
 	public Ball(ArrayList<Brick> bricks) {
 		
@@ -22,6 +24,7 @@ public class Ball extends Entity{
 		
 		collider = new Rectangle((int)x, (int)y, (int)width, (int)height);
 		this.bricks = bricks;
+		collidingBricks = new ArrayList<Brick>();
 	}
 	
 	private void checkWallCollisions() {
@@ -56,10 +59,30 @@ public class Ball extends Entity{
 				Rectangle intersection = collider.intersection(bricks.get(i).collider);
 				if(intersection.width > intersection.height) {
 					ySpeed *= -1;
+					if(getY() > bricks.get(i).getY()) {
+						ySpeed = Math.abs(ySpeed);
+					}else {
+						ySpeed = -1 * Math.abs(ySpeed);
+					}
 				}else {
 					xSpeed *= -1;
 				}
-				bricks.remove(bricks.get(i));
+				if(!collidingBricks.contains(bricks.get(i)))
+					collidingBricks.add(bricks.get(i));
+			}
+		}
+		checkCollidedBricks();
+	}
+	
+	void checkCollidedBricks() {
+		/*
+		 * Checks when ball has been removed from brick collider. It will
+		 * decrement the brick's health.
+		 */
+		for(int i = 0; i < collidingBricks.size(); i++) {
+			if(!collider.intersects(collidingBricks.get(i).collider)) {
+				collidingBricks.get(i).hit();
+				collidingBricks.remove(collidingBricks.get(i));
 			}
 		}
 	}

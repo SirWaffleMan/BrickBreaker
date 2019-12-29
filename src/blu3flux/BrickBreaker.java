@@ -63,18 +63,21 @@ public class BrickBreaker implements Runnable{
 		return paddle;
 	}
 	
+	void addBricks() {
+		int numOfRows = 5;
+		int bricksPerRow = 8;
+		
+		for(int i = 0; i < numOfRows; i++) {
+			for(int j = 0; j < bricksPerRow; j++) {
+				bricks.add(new Brick(j*200, i*50));
+			}
+		}
+	}
+	
 	void init() {
 		frame = new JFrame(title);
 		bricks = new ArrayList<Brick>();
-		// Adding temporary bricks
-		bricks.add(new Brick(20, 10));
-		bricks.add(new Brick(230, 10));
-		bricks.add(new Brick(440, 10));
-		bricks.add(new Brick(650, 10));
-		bricks.add(new Brick(860, 10));
-		bricks.add(new Brick(1070, 10));
-		bricks.add(new Brick(1280, 10));
-		
+		addBricks();
 		ball = new Ball(bricks);
 		paddle = new Paddle(ball);
 		renderer = new Renderer(800, 450, this);

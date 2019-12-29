@@ -47,11 +47,12 @@ public class Renderer extends JPanel{
 					(int)(ball.getHeight()/BrickBreaker.ABS_HEIGHT * getHeight()));
 		
 		// Draw Bricks
-		g.setColor(Color.GREEN);
-		for(Brick brick : bricks)
+		for(Brick brick : bricks) {
+			g.setColor(brick.getColor());
 			g.fillRect(	(int)(brick.getX()/BrickBreaker.ABS_WIDTH * getWidth()),
 						(int)(brick.getY()/BrickBreaker.ABS_HEIGHT * getHeight()), 
 						(int)(brick.getWidth()/BrickBreaker.ABS_WIDTH * getWidth()), 
 						(int)(brick.getHeight()/BrickBreaker.ABS_HEIGHT * getHeight()));
+		}
 	}
 }
