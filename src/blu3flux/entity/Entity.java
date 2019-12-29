@@ -1,11 +1,15 @@
 package blu3flux.entity;
 
+import java.awt.Rectangle;
+
 public abstract class Entity {
 	
 	protected double x;
 	protected double y;
 	protected double width;
 	protected double height;
+	
+	Rectangle collider;
 	
 	public void setX(double x) {
 		this.x = x;
@@ -38,4 +42,13 @@ public abstract class Entity {
 	public double getHeight() {
 		return height;
 	}
+	
+	protected void updateCollider() {
+		collider.x = (int)x;
+		collider.y = (int)y;
+		collider.width = (int)width;
+		collider.height = (int)height;
+	}
+	
+	public abstract void tick();
 }
