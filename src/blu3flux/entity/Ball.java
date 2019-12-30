@@ -1,15 +1,24 @@
 package blu3flux.entity;
 
+import java.awt.Image;
 import java.awt.Rectangle;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
+
+import javax.imageio.ImageIO;
 
 import blu3flux.BrickBreaker;
+import blu3flux.Player;
 
 public class Ball extends Entity{
 	
-	double xSpeed = 3.0f;
-	double ySpeed = -3.0f;
+	Image image;
+	
+	final double defaultSpeed = 3.0f;
+	
+	double xSpeed = 0;
+	double ySpeed = 0;
 	
 	ArrayList<Brick> bricks;
 	ArrayList<Brick> collidingBricks;
@@ -25,22 +34,27 @@ public class Ball extends Entity{
 		collider = new Rectangle((int)x, (int)y, (int)width, (int)height);
 		this.bricks = bricks;
 		collidingBricks = new ArrayList<Brick>();
+		loadImage();
+	}
+	
+	public Image getImage() {
+		return image;
 	}
 	
 	private void checkWallCollisions() {
 		// Right wall
 		if(x > BrickBreaker.ABS_WIDTH-width) {
-			xSpeed *= -1;
+			xSpeed = -1 * Math.abs(xSpeed);
 		}
 		
 		// Left wall
 		if(x < 0) {
-			xSpeed *= -1;
+			xSpeed = Math.abs(xSpeed);
 		}
 		
 		// Upper Wall
 		if(y < 0) {
-			ySpeed *= -1;
+			ySpeed = Math.abs(ySpeed);
 		}
 	}
 
@@ -51,6 +65,14 @@ public class Ball extends Entity{
 		checkWallCollisions();
 		checkBrickCollisions();
 		updateCollider();
+	}
+	
+	void loadImage() {
+		try {
+			image = ImageIO.read(new File("res/ball.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void checkBrickCollisions() {
@@ -65,13 +87,28 @@ public class Ball extends Entity{
 						ySpeed = -1 * Math.abs(ySpeed);
 					}
 				}else {
-					xSpeed *= -1;
+					
+					if(getX() > bricks.get(i).getX()) {
+						xSpeed = Math.abs(xSpeed);
+					}else {
+						xSpeed = -1 * Math.abs(xSpeed);
+					}
 				}
 				if(!collidingBricks.contains(bricks.get(i)))
 					collidingBricks.add(bricks.get(i));
 			}
 		}
 		checkCollidedBricks();
+	}
+	
+	public void setDefaultMotion() {
+		xSpeed = defaultSpeed;
+		ySpeed = -defaultSpeed;
+	}
+	
+	public void stopBallMotion() {
+		xSpeed = 0;
+		ySpeed = 0;
 	}
 	
 	void checkCollidedBricks() {
@@ -83,6 +120,7 @@ public class Ball extends Entity{
 			if(!collider.intersects(collidingBricks.get(i).collider)) {
 				collidingBricks.get(i).hit();
 				collidingBricks.remove(collidingBricks.get(i));
+				Player.points += Player.brickHitPoints;
 			}
 		}
 	}

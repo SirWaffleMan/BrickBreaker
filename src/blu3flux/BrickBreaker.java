@@ -19,13 +19,14 @@ public class BrickBreaker implements Runnable{
 	
 	// Parameters
 	boolean isRunning = false;
+	boolean paused = false;
 	int gameSpeed = 5500000;
 	public static double ABS_WIDTH = 1600;
 	public static double ABS_HEIGHT = 900;
 	public static double ABS_SPACING = 10;
 	
 	// GUI
-	String title = "Brick Breaker";
+	String title = "Brick Breaker - Blu3Flux";
 	JFrame frame;
 	Renderer renderer;
 	
@@ -54,9 +55,43 @@ public class BrickBreaker implements Runnable{
 		}
 	}
 	
+	void newGame() {
+		Player.lives = 3;
+		Player.points = 0;
+		paddle.newPaddle();
+		for(Brick brick: bricks) {
+			brick.newBrick();
+		}
+	}
+	
+	void checkPlayerDeath() {
+		if(Player.lives < 0) {
+			newGame();
+		}
+	}
+	
 	void tick() {
 		paddle.tick();
 		ball.tick();
+		checkPlayerDeath();
+		checkFinishedLevel();
+	}
+	
+	private void checkFinishedLevel() {
+		for(Brick brick: bricks) {
+			if(brick.getCollider().width > 0) {
+				return;
+			}
+		}
+		for(Brick brick: bricks) {
+			brick.newBrick();
+		}
+		
+		paddle.newPaddle();
+	}
+
+	public boolean isPaused() {
+		return paused;
 	}
 	
 	public Paddle getPaddle() {
@@ -64,12 +99,12 @@ public class BrickBreaker implements Runnable{
 	}
 	
 	void addBricks() {
-		int numOfRows = 5;
-		int bricksPerRow = 8;
+		int numOfRows = 6;
+		int bricksPerRow = 7;
 		
 		for(int i = 0; i < numOfRows; i++) {
 			for(int j = 0; j < bricksPerRow; j++) {
-				bricks.add(new Brick(j*200, i*50));
+				bricks.add(new Brick(100 + j*200, 50 + i*50));
 			}
 		}
 	}
@@ -80,21 +115,25 @@ public class BrickBreaker implements Runnable{
 		addBricks();
 		ball = new Ball(bricks);
 		paddle = new Paddle(ball);
-		renderer = new Renderer(800, 450, this);
+		renderer = new Renderer(1024, 576, this);
 		thread = new Thread(this);
 		input = new KeyboardControl(this);
 		frame.addKeyListener(input);
-		
-		
+	}
+	
+	public void togglePause() {
+		paused = !paused;
 	}
 
 	@Override
 	public void run() {
 		long last = System.nanoTime();
 		while(isRunning) {
-			if(System.nanoTime() - last > gameSpeed) {
-				last = System.nanoTime();
-				tick();
+			if(!paused) {
+				if(System.nanoTime() - last > gameSpeed) {
+					last = System.nanoTime();
+					tick();
+				}
 			}
 		}
 	}
