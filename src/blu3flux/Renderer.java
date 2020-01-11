@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
@@ -15,6 +13,8 @@ import blu3flux.entity.Brick;
 import blu3flux.entity.Paddle;
 
 public class Renderer extends JPanel{
+	
+	private static final long serialVersionUID = 1L;
 	
 	BrickBreaker game;
 	Paddle paddle;
