@@ -27,6 +27,10 @@ public abstract class Entity {
 		return y;
 	}
 	
+	public double getCenterX() {
+		return (x + x + width)/2;
+	}
+	
 	public void setWidth(int width) {
 		this.width = width;
 	}

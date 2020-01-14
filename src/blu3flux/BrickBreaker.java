@@ -1,6 +1,7 @@
 package blu3flux;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.JFrame;
 
@@ -8,6 +9,8 @@ import blu3flux.controls.KeyboardControl;
 import blu3flux.entity.Ball;
 import blu3flux.entity.Brick;
 import blu3flux.entity.Paddle;
+import blu3flux.qlearn.QEnvironment;
+import blu3flux.qlearn.QLearn;
 
 /*
  * Game runs on a 1600 x 900 grid.
@@ -20,7 +23,8 @@ public class BrickBreaker implements Runnable{
 	// Parameters
 	boolean isRunning = false;
 	boolean paused = false;
-	int gameSpeed = 5500000;
+	final int gameSpeed = 5500000;
+	public double gameSpeedMult = 1;
 	public static double ABS_WIDTH = 1600;
 	public static double ABS_HEIGHT = 900;
 	public static double ABS_SPACING = 10;
@@ -37,6 +41,9 @@ public class BrickBreaker implements Runnable{
 	
 	// Controls
 	KeyboardControl input;
+	
+	// QLearn
+	QLearn qLearn;
 	
 	
 	public BrickBreaker() {
@@ -56,12 +63,20 @@ public class BrickBreaker implements Runnable{
 	}
 	
 	void newGame() {
+
+		Player.scores[QEnvironment.episodeNumber%100] = Player.points;
+
+		if(Player.points > Player.highScore) {
+			Player.highScore = Player.points;
+		}
+		
 		Player.lives = 3;
 		Player.points = 0;
 		paddle.newPaddle();
 		for(Brick brick: bricks) {
 			brick.newBrick();
 		}
+		QEnvironment.incrementEpisode();
 	}
 	
 	void checkPlayerDeath() {
@@ -71,12 +86,21 @@ public class BrickBreaker implements Runnable{
 	}
 	
 	void tick() {
-		paddle.tick();
 		ball.tick();
+		paddle.tick();
+		qLearn.tick();
+		checkOutOfBoundsBall();
 		checkPlayerDeath();
 		checkFinishedLevel();
 	}
 	
+	private void checkOutOfBoundsBall() {
+		if(ball.outOfBounds()) {
+			Player.lives--;
+			paddle.newPaddle();
+		}
+	}
+
 	private void checkFinishedLevel() {
 		for(Brick brick: bricks) {
 			if(brick.getCollider().width > 0) {
@@ -96,6 +120,10 @@ public class BrickBreaker implements Runnable{
 	
 	public Paddle getPaddle() {
 		return paddle;
+	}
+	
+	public Ball getBall() {
+		return ball;
 	}
 	
 	void addBricks() {
@@ -119,6 +147,7 @@ public class BrickBreaker implements Runnable{
 		thread = new Thread(this);
 		input = new KeyboardControl(this);
 		frame.addKeyListener(input);
+		qLearn = new QLearn(this);
 	}
 	
 	public void togglePause() {
@@ -130,7 +159,7 @@ public class BrickBreaker implements Runnable{
 		long last = System.nanoTime();
 		while(isRunning) {
 			if(!paused) {
-				if(System.nanoTime() - last > gameSpeed) {
+				if(System.nanoTime() - last > (gameSpeed/gameSpeedMult)) {
 					last = System.nanoTime();
 					tick();
 				}

@@ -83,12 +83,6 @@ public class Paddle extends Entity implements Controllable{
 
 	private void checkBallOutOfBounds() {
 		if(ball.getY() > BrickBreaker.ABS_HEIGHT) {
-			Player.lives--;
-			
-			if(Player.lives <= 0) {
-				// TODO: Reset Game
-			}
-			
 			attachBall();
 		}
 	}
@@ -99,6 +93,13 @@ public class Paddle extends Entity implements Controllable{
 			ball.setX(centerX - ball.width/2);
 			ball.setY(getY() - 34);
 		}
+	}
+	
+	public boolean ballCollision() {
+		if(collider.intersects(ball.collider)) {
+			return true;
+		}
+		return false;
 	}
 
 	private void checkBallCollision() {
@@ -122,7 +123,7 @@ public class Paddle extends Entity implements Controllable{
 	public void detachBall() {
 		if(ballAttached) {
 			ballAttached = false;
-			ball.setDefaultMotion();
+			ball.setRandomMotion();
 		}
 	}
 }

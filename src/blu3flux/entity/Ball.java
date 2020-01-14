@@ -41,6 +41,13 @@ public class Ball extends Entity{
 		return image;
 	}
 	
+	public boolean outOfBounds() {
+		if(y > BrickBreaker.ABS_HEIGHT) {
+			return true;
+		}
+		return false;
+	}
+	
 	private void checkWallCollisions() {
 		// Right wall
 		if(x > BrickBreaker.ABS_WIDTH-width) {
@@ -101,14 +108,41 @@ public class Ball extends Entity{
 		checkCollidedBricks();
 	}
 	
+	public boolean collidingWithBricks() {
+		for(int i = 0; i < collidingBricks.size(); i++) {
+			if(!collider.intersects(collidingBricks.get(i).collider)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public void setDefaultMotion() {
 		xSpeed = defaultSpeed;
 		ySpeed = -defaultSpeed;
 	}
 	
+	public void setRandomMotion() {
+		xSpeed = Math.random()*defaultSpeed;
+		ySpeed = -defaultSpeed;
+		
+		if(Math.random() > 0.5) {
+			xSpeed *= -1;
+		}
+		
+	}
+	
 	public void stopBallMotion() {
 		xSpeed = 0;
 		ySpeed = 0;
+	}
+	
+	public double getXSpeed() {
+		return xSpeed;
+	}
+	
+	public double getYSpeed() {
+		return ySpeed;
 	}
 	
 	void checkCollidedBricks() {

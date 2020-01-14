@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import blu3flux.entity.Ball;
 import blu3flux.entity.Brick;
 import blu3flux.entity.Paddle;
+import blu3flux.qlearn.QEnvironment;
 
 public class Renderer extends JPanel{
 	
@@ -76,6 +77,19 @@ public class Renderer extends JPanel{
 						(int)(BrickBreaker.ABS_WIDTH/2/BrickBreaker.ABS_WIDTH * getWidth() - 27), 
 						(int)(BrickBreaker.ABS_HEIGHT/2/BrickBreaker.ABS_HEIGHT * getHeight()));
 		}
+		
+		// Draw QEnvironment HUD
+		g.setFont(new Font("Arial", Font.PLAIN, 12));
+		
+		String episode = "Episode: " + QEnvironment.episodeNumber;
+		String expRate = String.format("Exploration Rate: %.4f",QEnvironment.explorationRate);
+		String speed = String.format("Speed: %.1fx", game.gameSpeedMult);
+		String highScore = String.format("High score: %d", Player.highScore);
+		String avgScore = String.format("Average Score: %d", Player.getAverageScore());
+		
+		g.drawString(String.format("%s | %s | %s | %s | %s", episode, expRate, speed, highScore, avgScore),
+				(int)(10/BrickBreaker.ABS_WIDTH * getWidth()), 
+				(int)(30/BrickBreaker.ABS_HEIGHT * getHeight()));
 		
 	}
 }

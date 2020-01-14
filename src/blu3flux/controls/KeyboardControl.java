@@ -16,6 +16,36 @@ public class KeyboardControl implements KeyListener{
 	@Override
 	public void keyPressed(KeyEvent e) {
 		
+		if(e.getKeyCode() == KeyEvent.VK_F1){
+			if(!(game.gameSpeedMult <= 10)) {
+				game.gameSpeedMult -= 10;
+			}else {
+				game.gameSpeedMult = 1;
+			}
+		}
+		if(e.getKeyCode() == KeyEvent.VK_F2){
+			if(game.gameSpeedMult == 1) {
+				game.gameSpeedMult = 10;
+			}else {
+				game.gameSpeedMult += 10;
+			}
+		}
+		
+		if(e.getKeyCode() == KeyEvent.VK_F3){
+			if(!(game.gameSpeedMult <= 100)) {
+				game.gameSpeedMult -= 100;
+			}else {
+				game.gameSpeedMult = 1;
+			}
+		}
+		if(e.getKeyCode() == KeyEvent.VK_F4){
+			if(game.gameSpeedMult == 1) {
+				game.gameSpeedMult = 100;
+			}else {
+				game.gameSpeedMult += 100;
+			}
+		}
+		
 		if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 			game.togglePause();
 		}
