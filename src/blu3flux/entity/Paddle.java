@@ -123,7 +123,7 @@ public class Paddle extends Entity implements Controllable{
 	public void detachBall() {
 		if(ballAttached) {
 			ballAttached = false;
-			ball.setRandomMotion();
+			ball.setDefaultMotion();
 		}
 	}
 }
